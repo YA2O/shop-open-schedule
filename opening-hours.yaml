@@ -1,0 +1,153 @@
+openapi: 3.0.0
+info:
+  title: Opening Hours API
+  version: 1.0.0
+  description: API with a single endpoint to present a restaurant's opening hours in a human-readable format.
+paths:
+  /opening-hours/v1:
+    post:
+      summary: Present opening hours in a human-readable format
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                monday:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/openingHoursItem'
+                tuesday:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/openingHoursItem'
+                wednesday:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/openingHoursItem'
+                thursday:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/openingHoursItem'
+                friday:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/openingHoursItem'
+                saturday:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/openingHoursItem'
+                sunday:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/openingHoursItem'
+            examples:
+              example1:
+                value:
+                  monday: []
+                  tuesday:
+                    - type: open
+                      value: 36000
+                    - type: close
+                      value: 64800
+                  wednesday: []
+                  thursday:
+                    - type: open
+                      value: 37800
+                    - type: close
+                      value: 64800
+                  friday:
+                    - type: open
+                      value: 36000
+                  saturday:
+                    - type: close
+                      value: 3600
+                    - type: open
+                      value: 36000
+                  sunday:
+                    - type: close
+                      value: 3600
+                    - type: open
+                      value: 43200
+                    - type: close
+                      value: 75600
+              example2:
+                value:
+                  tuesday:
+                    - type: open
+                      value: 36000
+                    - type: close
+                      value: 37800
+                    - type: open
+                      value: 70200
+                    - type: close
+                      value: 75600
+                  friday:
+                    - type: open
+                      value: 36000
+                  saturday:
+                    - type: close
+                      value: 3600
+                  sunday:
+                    - type: open
+                      value: 43200
+                    - type: close
+                      value: 75600
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  opening-hours:
+                    type: array
+                    items:
+                      type: string
+              examples:
+                example1:
+                  value:
+                    opening-hours:
+                      - "Monday: Closed"
+                      - "Tuesday: 10 AM - 6 PM"
+                      - "Wednesday: Closed"
+                      - "Thursday: 10:30 AM - 6 PM"
+                      - "Friday: 10 AM - 1 AM"
+                      - "Saturday: 10 AM - 1 AM"
+                      - "Sunday: 12 PM - 9 PM"
+                example2:
+                  value:
+                    opening-hours:
+                      - "Monday: Closed"
+                      - "Tuesday: 10 AM - 10:30 AM, 7:30 PM - 9 PM"
+                      - "Wednesday: Closed"
+                      - "Thursday: Closed"
+                      - "Friday: 10 AM - 1 AM"
+                      - "Saturday: Closed"
+                      - "Sunday: 12 PM - 9 PM"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  cause:
+                    type: string
+components:
+  schemas:
+    openingHoursItem:
+      type: object
+      required: ['type', 'value']
+      properties:
+        type:
+          type: string
+          enum: ["open", "close"]
+        value:
+          type: integer
+          minimum: 0
+          maximum: 86399
